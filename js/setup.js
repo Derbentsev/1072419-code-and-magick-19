@@ -11,12 +11,10 @@ var wizards = [];
 
 var similarListElement = document.querySelector('.setup-similar-list');
 var userDialog = document.querySelector('.setup');
+var setupWizardWindow = userDialog.querySelector('.setup-similar');
 var similarWizardTemplate = document.querySelector('#similar-wizard-template')
   .content
   .querySelector('.setup-similar-item');
-
-userDialog.querySelector('.setup-similar').classList.remove('hidden');
-userDialog.classList.remove('hidden');
 
 /**
  * Определяем случайное число, начиная от 0
@@ -72,6 +70,8 @@ var wizardAdd = function () {
 };
 
 
+setupWizardWindow.classList.remove('hidden');
+userDialog.classList.remove('hidden');
 createWizards();
 wizardAdd();
 document.querySelector('.setup-similar-list').classList.remove('hidden');
