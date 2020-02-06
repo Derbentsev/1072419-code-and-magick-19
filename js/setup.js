@@ -1,6 +1,8 @@
 'use strict';
 
 var WIZARD_COUNT = 4;
+var ENTER_KEY = 13;
+var ESC_KEY = 27;
 
 var WIZARD_NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
 var WIZARD_SURNAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
@@ -12,6 +14,9 @@ var wizards = [];
 var similarListElement = document.querySelector('.setup-similar-list');
 var userDialog = document.querySelector('.setup');
 var setupWizardWindow = userDialog.querySelector('.setup-similar');
+var setupWizardCloseButton = userDialog.querySelector('.setup-close');
+var setupWizardOpenButton = document.querySelector('.setup-open');
+var avatarImage = setupWizardOpenButton.querySelector('img');
 var similarWizardTemplate = document.querySelector('#similar-wizard-template')
   .content
   .querySelector('.setup-similar-item');
@@ -69,9 +74,51 @@ var wizardAdd = function () {
   similarListElement.appendChild(fragment);
 };
 
+/**
+ * Добавялем видимость для блока с настройкой персонажа
+ * @return {void}
+ */
+var onAvatarClick = function () {
+  userDialog.classList.remove('hidden');
+  document.addEventListener('keydown', onPopupEscPress);
+};
+
+/**
+ * Обработка нажатия на клавиатурные клавиши
+ * @param {object} evt - Нажатие на клавиатуре
+ * @return {void}
+ */
+var onPopupEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEY && !evt.target.matches(['input'])) {
+    userDialog.classList.add('hidden');
+    document.removeEventListener('keydown', onPopupEscPress);
+  }
+};
+
+/**
+ * Создаем обработчики событий
+ * @return {void}
+ */
+var createEventListeners = function () {
+  avatarImage.addEventListener('click', onAvatarClick);
+
+  setupWizardCloseButton.addEventListener('click', function () {
+    userDialog.classList.add('hidden');
+    // avatarImage.removeEventListener('click', onAvatarClick);
+  });
+
+  avatarImage.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEY) {
+      onAvatarClick();
+    }
+  });
+};
+
 
 setupWizardWindow.classList.remove('hidden');
-userDialog.classList.remove('hidden');
+
+createEventListeners();
+
 createWizards();
 wizardAdd();
 document.querySelector('.setup-similar-list').classList.remove('hidden');
