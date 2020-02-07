@@ -8,6 +8,7 @@ var WIZARD_NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'К
 var WIZARD_SURNAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
 var COAT_COLOR = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
 var EYE_COLOR = ['black', 'red', 'blue', 'yellow', 'green'];
+var FIREBALL_COLOR = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
 
 var wizards = [];
 
@@ -20,6 +21,13 @@ var avatarImage = setupWizardOpenButton.querySelector('img');
 var similarWizardTemplate = document.querySelector('#similar-wizard-template')
   .content
   .querySelector('.setup-similar-item');
+
+var setupPlayer = userDialog.querySelector('.setup-player');
+var setupWizardCoat = setupPlayer.querySelector('.wizard-coat');
+var setupWizardCoatInput = setupPlayer.querySelector('input[name="coat-color"]');
+var setupWizardEyes = setupPlayer.querySelector('.wizard-eyes');
+var setupWizardEyesInput = setupPlayer.querySelector('input[name="eyes-color"]');
+var setupFireball = document.querySelector('.setup-fireball-wrap');
 
 /**
  * Определяем случайное число, начиная от 0
@@ -75,50 +83,84 @@ var wizardAdd = function () {
 };
 
 /**
- * Добавялем видимость для блока с настройкой персонажа
+ * Открываем блок с настройкой персонажа
  * @return {void}
  */
-var onAvatarClick = function () {
+var onAvatarClickHandler = function () {
   userDialog.classList.remove('hidden');
-  document.addEventListener('keydown', onPopupEscPress);
+  document.addEventListener('keydown', onPopupEscPressHandler);
 };
 
 /**
- * Обработка нажатия на клавиатурные клавиши
+ * Закрытие окна настройки персонажа при нажатии клавиши ESC
  * @param {object} evt - Нажатие на клавиатуре
  * @return {void}
  */
-var onPopupEscPress = function (evt) {
+var onPopupEscPressHandler = function (evt) {
   if (evt.keyCode === ESC_KEY && !evt.target.matches(['input'])) {
     userDialog.classList.add('hidden');
-    document.removeEventListener('keydown', onPopupEscPress);
+    document.removeEventListener('keydown', onPopupEscPressHandler);
   }
 };
 
 /**
- * Создаем обработчики событий
+ * Закрытие окна настройки персонажа при нажатии на ENTER или клике мышкой
+ * @param {object} evt - Нажатие на клавиатуре
  * @return {void}
  */
-var createEventListeners = function () {
-  avatarImage.addEventListener('click', onAvatarClick);
+var setupWizardCloseHandler = function () {
+  userDialog.classList.add('hidden');
+  document.removeEventListener('click', onPopupEscPressHandler);
+};
 
-  setupWizardCloseButton.addEventListener('click', function () {
-    userDialog.classList.add('hidden');
-    // avatarImage.removeEventListener('click', onAvatarClick);
-  });
-
+/**
+ * Создаем обработчики событий открытия и закрытия окна настройки персонажа
+ * @return {void}
+ */
+var createEventListenersSetupWindow = function () {
+  avatarImage.addEventListener('click', onAvatarClickHandler);
   avatarImage.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ENTER_KEY) {
-      onAvatarClick();
+      onAvatarClickHandler();
     }
+  });
+
+  setupWizardCloseButton.addEventListener('click', setupWizardCloseHandler);
+  setupWizardCloseButton.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEY && evt.target.matches(['.setup-close'])) {
+      setupWizardCloseHandler();
+    }
+  });
+};
+
+/**
+ * Создаем обработчики событий смены цвета мантии, глаз и фаербола
+ * @return {void}
+ */
+var createEventListenersPlayerColor = function () {
+  setupWizardCoat.addEventListener('click', function () {
+    var coatColor = COAT_COLOR[getRandomNumber(COAT_COLOR.length)];
+    setupWizardCoat.style.fill = coatColor;
+    setupWizardCoatInput.value = coatColor;
+  });
+
+  setupWizardEyes.addEventListener('click', function () {
+    var eyeColor = EYE_COLOR[getRandomNumber(EYE_COLOR.length)];
+    setupWizardEyes.style.fill = eyeColor;
+    setupWizardEyesInput.value = eyeColor;
+  });
+
+  setupFireball.addEventListener('click', function () {
+    var fireballColor = FIREBALL_COLOR[getRandomNumber(FIREBALL_COLOR.length)];
+    setupFireball.style.backgroundColor = fireballColor;
+    setupFireball.value = fireballColor;
   });
 };
 
 
 setupWizardWindow.classList.remove('hidden');
-
-createEventListeners();
-
+createEventListenersSetupWindow();
+createEventListenersPlayerColor();
 createWizards();
 wizardAdd();
-document.querySelector('.setup-similar-list').classList.remove('hidden');
+similarListElement.classList.remove('hidden');
