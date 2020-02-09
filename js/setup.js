@@ -59,13 +59,13 @@ var createWizards = function () {
  * @return {object} Возвращаем объект-вёрстку мага
  */
 var renderWizard = function (wizard) {
-  var wizard = similarWizardTemplate.cloneNode(true);
+  var wizardClone = similarWizardTemplate.cloneNode(true);
 
-  wizard.querySelector('.setup-similar-label').textContent = wizard.name + ' ' + wizard.surname;
-  wizard.querySelector('.wizard-coat').style.fill = wizard.coatColor;
-  wizard.querySelector('.wizard-eyes').style.fill = wizard.eyeColor;
+  wizardClone.querySelector('.setup-similar-label').textContent = wizard.name + ' ' + wizard.surname;
+  wizardClone.querySelector('.wizard-coat').style.fill = wizard.coatColor;
+  wizardClone.querySelector('.wizard-eyes').style.fill = wizard.eyeColor;
 
-  return wizard;
+  return wizardClone;
 };
 
 /**
@@ -95,6 +95,7 @@ var openSetupWindow = function () {
 
 /**
  * Открываем окно настройки персонажа по нажатию ENTER
+ * @param {object} evt - Событие нажатия
  * @return {void}
  */
 var onAvatarPressEnter = function (evt) {
