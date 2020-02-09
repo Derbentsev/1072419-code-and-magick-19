@@ -1,8 +1,8 @@
 'use strict';
 
 var WIZARD_COUNT = 4;
-var ENTER_KEY = 13;
-var ESC_KEY = 27;
+var ENTER_KEY = 'Enter';
+var ESC_KEY = 'Escape';
 
 var WIZARD_NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
 var WIZARD_SURNAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
@@ -12,7 +12,7 @@ var FIREBALL_COLOR = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
 
 var wizards = [];
 
-var similarListElement = document.querySelector('.setup-similar-list');
+var similarList = document.querySelector('.setup-similar-list');
 var userDialog = document.querySelector('.setup');
 var setupWizardWindow = userDialog.querySelector('.setup-similar');
 var setupWizardCloseButton = userDialog.querySelector('.setup-close');
@@ -59,13 +59,13 @@ var createWizards = function () {
  * @return {object} Возвращаем объект-вёрстку мага
  */
 var renderWizard = function (wizard) {
-  var wizardElement = similarWizardTemplate.cloneNode(true);
+  var wizard = similarWizardTemplate.cloneNode(true);
 
-  wizardElement.querySelector('.setup-similar-label').textContent = wizard.name + ' ' + wizard.surname;
-  wizardElement.querySelector('.wizard-coat').style.fill = wizard.coatColor;
-  wizardElement.querySelector('.wizard-eyes').style.fill = wizard.eyeColor;
+  wizard.querySelector('.setup-similar-label').textContent = wizard.name + ' ' + wizard.surname;
+  wizard.querySelector('.wizard-coat').style.fill = wizard.coatColor;
+  wizard.querySelector('.wizard-eyes').style.fill = wizard.eyeColor;
 
-  return wizardElement;
+  return wizard;
 };
 
 /**
@@ -79,88 +79,145 @@ var wizardAdd = function () {
     fragment.appendChild(renderWizard(item));
   });
 
-  similarListElement.appendChild(fragment);
+  similarList.appendChild(fragment);
 };
 
 /**
- * Открываем блок с настройкой персонажа
+ * Открываем окно настройки персонажа
  * @return {void}
  */
-var onAvatarClickHandler = function () {
+var openSetupWindow = function () {
   userDialog.classList.remove('hidden');
-  document.addEventListener('keydown', onPopupEscPressHandler);
+
+  createEventListenersCloseSetupWindow();
+  removeEventListenersOpenSetupWindow();
 };
 
 /**
- * Закрытие окна настройки персонажа при нажатии клавиши ESC
- * @param {object} evt - Нажатие на клавиатуре
+ * Открываем окно настройки персонажа по нажатию ENTER
  * @return {void}
  */
-var onPopupEscPressHandler = function (evt) {
-  if (evt.keyCode === ESC_KEY && !evt.target.matches(['input'])) {
-    userDialog.classList.add('hidden');
-    document.removeEventListener('keydown', onPopupEscPressHandler);
+var onAvatarPressEnter = function (evt) {
+  if (evt.key === ENTER_KEY) {
+    openSetupWindow();
   }
 };
 
 /**
- * Закрытие окна настройки персонажа при нажатии на ENTER или клике мышкой
+ * Закрываем окно настройки персонажа
+ * @return {void}
+ */
+var closeSetupWindow = function () {
+  userDialog.classList.add('hidden');
+
+  createEventListenersOpenSetupWindow();
+  removeEventListenersCloseSetupWindow();
+};
+
+/**
+ * Закрываем окно настройки персонажа при нажатии клавиши ESC
  * @param {object} evt - Нажатие на клавиатуре
  * @return {void}
  */
-var setupWizardCloseHandler = function () {
-  userDialog.classList.add('hidden');
-  document.removeEventListener('click', onPopupEscPressHandler);
+var onPopupPressEsc = function (evt) {
+  if (evt.key === ESC_KEY && !evt.target.matches(['input'])) {
+    closeSetupWindow();
+  }
 };
 
 /**
- * Создаем обработчики событий открытия и закрытия окна настройки персонажа
+ * Закрываем окно настройки персонажа при нажатии клавиши ENTER
+ * @param {object} evt - Нажатие на клавиатуре
  * @return {void}
  */
-var createEventListenersSetupWindow = function () {
-  avatarImage.addEventListener('click', onAvatarClickHandler);
-  avatarImage.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEY) {
-      onAvatarClickHandler();
-    }
-  });
-
-  setupWizardCloseButton.addEventListener('click', setupWizardCloseHandler);
-  setupWizardCloseButton.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEY && evt.target.matches(['.setup-close'])) {
-      setupWizardCloseHandler();
-    }
-  });
+var onPopupPressEnter = function (evt) {
+  if (evt.key === ENTER_KEY && evt.target === setupWizardCloseButton) {
+    closeSetupWindow();
+  }
 };
 
 /**
- * Создаем обработчики событий смены цвета мантии, глаз и фаербола
+ * Создаем обработчики событий открытия окна настройки персонажа
+ * @return {void}
+ */
+var createEventListenersOpenSetupWindow = function () {
+  avatarImage.addEventListener('click', openSetupWindow);
+  avatarImage.addEventListener('keydown', onAvatarPressEnter);
+};
+
+/**
+ * Создаем обработчики событий закрытия окна настройки персонажа
+ * @return {void}
+ */
+var createEventListenersCloseSetupWindow = function () {
+  document.addEventListener('keydown', onPopupPressEsc);
+  setupWizardCloseButton.addEventListener('click', closeSetupWindow);
+  setupWizardCloseButton.addEventListener('keydown', onPopupPressEnter);
+};
+
+/**
+ * Удаляем обработчики событий открытия окна настройки персонажа
+ * @return {void}
+ */
+var removeEventListenersOpenSetupWindow = function () {
+  avatarImage.removeEventListener('click', openSetupWindow);
+  avatarImage.removeEventListener('keydown', onAvatarPressEnter);
+};
+
+/**
+ * Удаляем обработчики событий закрытия окна настройки персонажа
+ * @return {void}
+ */
+var removeEventListenersCloseSetupWindow = function () {
+  document.removeEventListener('keydown', onPopupPressEsc);
+  setupWizardCloseButton.removeEventListener('click', closeSetupWindow);
+  setupWizardCloseButton.removeEventListener('keydown', closeSetupWindow);
+};
+
+/**
+ * Меняем цвет мантии
+ * @return {void}
+ */
+var changeColorCoat = function () {
+  var coatColor = COAT_COLOR[getRandomNumber(COAT_COLOR.length)];
+  setupWizardCoat.style.fill = coatColor;
+  setupWizardCoatInput.value = coatColor;
+};
+
+/**
+ * Меняем цвет глаз
+ * @return {void}
+ */
+var changeEyesColor = function () {
+  var eyeColor = EYE_COLOR[getRandomNumber(EYE_COLOR.length)];
+  setupWizardEyes.style.fill = eyeColor;
+  setupWizardEyesInput.value = eyeColor;
+};
+
+/**
+ * Меняем цвет фаерболла
+ * @return {void}
+ */
+var changeFireballColor = function () {
+  var fireballColor = FIREBALL_COLOR[getRandomNumber(FIREBALL_COLOR.length)];
+  setupFireball.style.backgroundColor = fireballColor;
+  setupFireball.value = fireballColor;
+};
+
+/**
+ * Создаем обработчики событий клика на персонаже в окне Настройки
  * @return {void}
  */
 var createEventListenersPlayerColor = function () {
-  setupWizardCoat.addEventListener('click', function () {
-    var coatColor = COAT_COLOR[getRandomNumber(COAT_COLOR.length)];
-    setupWizardCoat.style.fill = coatColor;
-    setupWizardCoatInput.value = coatColor;
-  });
-
-  setupWizardEyes.addEventListener('click', function () {
-    var eyeColor = EYE_COLOR[getRandomNumber(EYE_COLOR.length)];
-    setupWizardEyes.style.fill = eyeColor;
-    setupWizardEyesInput.value = eyeColor;
-  });
-
-  setupFireball.addEventListener('click', function () {
-    var fireballColor = FIREBALL_COLOR[getRandomNumber(FIREBALL_COLOR.length)];
-    setupFireball.style.backgroundColor = fireballColor;
-    setupFireball.value = fireballColor;
-  });
+  setupWizardCoat.addEventListener('click', changeColorCoat);
+  setupWizardEyes.addEventListener('click', changeEyesColor);
+  setupFireball.addEventListener('click', changeFireballColor);
 };
 
 
 setupWizardWindow.classList.remove('hidden');
-createEventListenersSetupWindow();
+createEventListenersOpenSetupWindow();
 createEventListenersPlayerColor();
 createWizards();
 wizardAdd();
-similarListElement.classList.remove('hidden');
+similarList.classList.remove('hidden');
