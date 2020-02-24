@@ -2,7 +2,7 @@
 
 (function () {
   window.utilis = {
-    getRandomNumber = getRandomNumber
+    getRandomNumber: getRandomNumber
   };
 
   /**

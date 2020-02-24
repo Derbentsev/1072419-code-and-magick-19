@@ -7,22 +7,22 @@
   var isDragged = false;
 
   var startCoords;
-  
-  function onMouseMove(startCoords) {
-    return function (moveEvt) {
+
+function onMouseMove(coords) {
+    return function mouseMove (moveEvt) {
       moveEvt.preventDefault();
       isDragged = true;
-  
+
       var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
+        x: coords.x - moveEvt.clientX,
+        y: coords.y - moveEvt.clientY
       };
-  
-      startCoords = {
+
+      coords = {
         x: moveEvt.clientX,
         y: moveEvt.clientY
       };
-  
+
       setupWindow.style.top = (setupWindow.offsetTop - shift.y) + 'px';
       setupWindow.style.left = (setupWindow.offsetLeft - shift.x) + 'px';
     };

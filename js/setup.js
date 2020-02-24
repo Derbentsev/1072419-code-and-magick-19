@@ -41,10 +41,10 @@
   var createWizards = function () {
     for (var i = 0; i < WIZARD_COUNT; i++) {
       wizards.push({
-        name: WIZARD_NAMES[window.utilits.getRandomNumber(WIZARD_NAMES.length)],
-        surname: WIZARD_SURNAMES[window.utilits.getRandomNumber(WIZARD_SURNAMES.length)],
-        coatColor: COAT_COLOR[window.utilits.getRandomNumber(COAT_COLOR.length)],
-        eyeColor: EYE_COLOR[window.utilits.getRandomNumber(EYE_COLOR.length)]
+        name: WIZARD_NAMES[window.utils.getRandomNumber(WIZARD_NAMES.length)],
+        surname: WIZARD_SURNAMES[window.utils.getRandomNumber(WIZARD_SURNAMES.length)],
+        coatColor: COAT_COLOR[window.utils.getRandomNumber(COAT_COLOR.length)],
+        eyeColor: EYE_COLOR[window.utils.getRandomNumber(EYE_COLOR.length)]
       });
     }
   };
@@ -178,7 +178,7 @@
    * @return {void}
    */
   var changeColorCoat = function () {
-    var coatColor = COAT_COLOR[window.utilits.getRandomNumber(COAT_COLOR.length)];
+    var coatColor = COAT_COLOR[window.utils.getRandomNumber(COAT_COLOR.length)];
     setupWizardCoat.style.fill = coatColor;
     setupWizardCoatInput.value = coatColor;
   };
@@ -188,7 +188,7 @@
    * @return {void}
    */
   var changeEyesColor = function () {
-    var eyeColor = EYE_COLOR[window.utilits.getRandomNumber(EYE_COLOR.length)];
+    var eyeColor = EYE_COLOR[window.utils.getRandomNumber(EYE_COLOR.length)];
     setupWizardEyes.style.fill = eyeColor;
     setupWizardEyesInput.value = eyeColor;
   };
@@ -198,7 +198,7 @@
    * @return {void}
    */
   var changeFireballColor = function () {
-    var fireballColor = FIREBALL_COLOR[window.utilits.getRandomNumber(FIREBALL_COLOR.length)];
+    var fireballColor = FIREBALL_COLOR[window.utils.getRandomNumber(FIREBALL_COLOR.length)];
     setupFireball.style.backgroundColor = fireballColor;
     setupFireball.value = fireballColor;
   };
