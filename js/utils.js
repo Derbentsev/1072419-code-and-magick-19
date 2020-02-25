@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  window.utilis = {
+  window.utils = {
     getRandomNumber: getRandomNumber
   };
 
@@ -10,7 +10,7 @@
    * @param {number} max - Максимальное целое число
    * @return {number} Случайное целое число
    */
-  var getRandomNumber = function (max) {
+  function getRandomNumber(max) {
     return Math.round(Math.random() * (max - 1));
-  };
+  }
 })();

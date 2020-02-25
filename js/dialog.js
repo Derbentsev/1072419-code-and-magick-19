@@ -8,25 +8,23 @@
 
   var startCoords;
 
-function onMouseMove(coords) {
-    return function mouseMove (moveEvt) {
-      moveEvt.preventDefault();
-      isDragged = true;
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+    isDragged = true;
 
-      var shift = {
-        x: coords.x - moveEvt.clientX,
-        y: coords.y - moveEvt.clientY
-      };
-
-      coords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
-
-      setupWindow.style.top = (setupWindow.offsetTop - shift.y) + 'px';
-      setupWindow.style.left = (setupWindow.offsetLeft - shift.x) + 'px';
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
     };
-  }
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    setupWindow.style.top = (setupWindow.offsetTop - shift.y) + 'px';
+    setupWindow.style.left = (setupWindow.offsetLeft - shift.x) + 'px';
+  };
 
   var onClickPreventDefault = function (clickEvt) {
     clickEvt.preventDefault();
@@ -36,7 +34,7 @@ function onMouseMove(coords) {
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
-    document.removeEventListener('mousemove', onMouseMove(startCoords));
+    document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
 
     if (isDragged) {
@@ -52,7 +50,7 @@ function onMouseMove(coords) {
       y: evt.clientY
     };
 
-    document.addEventListener('mousemove', onMouseMove(startCoords));
+    document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
 })();
