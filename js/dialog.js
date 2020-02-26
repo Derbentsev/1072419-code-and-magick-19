@@ -8,6 +8,11 @@
 
   var startCoords;
 
+  /**
+   * При движении мыши
+   * @param {*} moveEvt - Событие движения мышкой
+   * @return {void}
+   */
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
     isDragged = true;
@@ -26,31 +31,46 @@
     setupWindow.style.left = (setupWindow.offsetLeft - shift.x) + 'px';
   };
 
-  var onClickPreventDefault = function (clickEvt) {
+  /**
+   * При клике мышкой
+   * @param {*} clickEvt - Событие клика мышкой
+   * @return {void}
+   */
+  var onMouseClick = function (clickEvt) {
     clickEvt.preventDefault();
-    avatarOnPopup.removeEventListener('click', onClickPreventDefault);
+    avatarOnPopup.removeEventListener('click', onMouseClick);
   };
 
-  var onMouseUp = function (upEvt) {
-    upEvt.preventDefault();
-
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', onMouseUp);
-
-    if (isDragged) {
-      avatarOnPopup.addEventListener('click', onClickPreventDefault);
-    }
-  };
-
-  avatarOnPopup.addEventListener('mousedown', function (evt) {
-    evt.preventDefault();
-
+  /**
+   * При нажатии мышкой
+   * @param {*} downEvt - Событие нажатия мышкой
+   * @return {void}
+   */
+  var onMouseDown = function (downEvt) {
     startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
+      x: downEvt.clientX,
+      y: downEvt.clientY
     };
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-  });
+  };
+
+  /**
+   * При отпускании кнопки мышки
+   * @param {*} upEvt - Событие кнопки мышки
+   * @return {void}
+   */
+  var onMouseUp = function (upEvt) {
+    if (isDragged) {
+      isDragged = false;
+      upEvt.preventDefault();
+      avatarOnPopup.addEventListener('click', onMouseClick);
+    }
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  avatarOnPopup.addEventListener('mousedown', onMouseDown);
 })();
