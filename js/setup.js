@@ -72,6 +72,8 @@
     userDialog.style.top = '';
     userDialog.style.left = '';
 
+    form.addEventListener('submit', onFormSubmit);
+
     createEventListenersCloseSetupWindow();
     removeEventListenersOpenSetupWindow();
   };
@@ -93,6 +95,8 @@
    */
   var closeSetupWindow = function () {
     userDialog.classList.add('hidden');
+
+    form.removeEventListener('submit', onFormSubmit);
 
     createEventListenersOpenSetupWindow();
     removeEventListenersCloseSetupWindow();
@@ -199,6 +203,23 @@
   };
 
   /**
+   * Обрабатываем ошибки, которые пришли с сервера при загрузке списка волшебников
+   * @param {string} errorMessage - Сообщение об ошибке
+   * @return {void}
+   */
+  var onErrorWizardsLoad = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+  /**
    * Действия при отправке формы
    * @param {object} evt - Событие отправки формы
    * @return {void}
@@ -208,22 +229,10 @@
     window.backend.save(new FormData(form), closeSetupWindow, onErrorWizardsLoad);
   };
 
-  /**
-   * Обрабатываем ошибки, которые пришли с сервера при загрузке списка волшебников
-   * @param {string} errorMessage - Сообщение об ошибке
-   * @return {void}
-   */
-  var onErrorWizardsLoad = function (errorMessage) {
-
-  };
-
 
   setupWizardWindow.classList.remove('hidden');
   createEventListenersOpenSetupWindow();
   createEventListenersPlayerColor();
   similarList.classList.remove('hidden');
-
-  form.addEventListener('submit', onFormSubmit);
-
   window.backend.load(wizardAdd, onErrorWizardsLoad);
 })();
