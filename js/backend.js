@@ -55,9 +55,9 @@
     xhr.responseType = 'json';
     xhr.timeout = 5000;
 
-    xhr.addEventListener('load', onLoadData(xhr, onLoad, onError));
-    xhr.addEventListener('error', onErrorLoadData(onError));
-    xhr.addEventListener('timeout', onTimeoutLoadData(xhr, onError));
+    xhr.addEventListener('load', onLoadData(xhr, onLoad, onError), {once: true});
+    xhr.addEventListener('error', onErrorLoadData(onError), {once: true});
+    xhr.addEventListener('timeout', onTimeoutLoadData(xhr, onError), {once: true});
 
     xhr.open('GET', LOAD_URL);
     xhr.send();
@@ -74,8 +74,8 @@
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
-    xhr.addEventListener('load', onLoad);
-    xhr.addEventListener('error', onErrorLoadData(onError));
+    xhr.addEventListener('load', onLoad, {once: true});
+    xhr.addEventListener('error', onErrorLoadData(onError), {once: true});
 
     xhr.open('POST', SAVE_URL);
     xhr.send(data);
