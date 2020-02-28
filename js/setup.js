@@ -5,16 +5,20 @@
   var ENTER_KEY = 'Enter';
   var ESC_KEY = 'Escape';
 
-  var WIZARD_NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
-  var WIZARD_SURNAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
+  var INSERT_ELEMENT_STYLE = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red';
+  var INSERT_ELEMENT_STYLE_POSITION = 'absolute';
+  var INSERT_ELEMENT_LEFT = 0;
+  var INSERT_ELEMENT_RIGHT = 0;
+  var INSERT_ELEMENT_FONT_SIZE = '30px';
+  var INSERT_ELEMENT_POSITION = 'afterbegin';
+
   var COAT_COLOR = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
   var EYE_COLOR = ['black', 'red', 'blue', 'yellow', 'green'];
   var FIREBALL_COLOR = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
 
-  var wizards = [];
-
   var similarList = document.querySelector('.setup-similar-list');
   var userDialog = document.querySelector('.setup');
+  var form = userDialog.querySelector('.setup-wizard-form');
   var setupWizardWindow = userDialog.querySelector('.setup-similar');
   var setupWizardCloseButton = userDialog.querySelector('.setup-close');
   var setupWizardOpenButton = document.querySelector('.setup-open');
@@ -35,21 +39,6 @@
   };
 
   /**
-   * Создаем объект-мага и добавляем его в массив магов
-   * @return {void}
-   */
-  var createWizards = function () {
-    for (var i = 0; i < WIZARD_COUNT; i++) {
-      wizards.push({
-        name: WIZARD_NAMES[window.utils.getRandomNumber(WIZARD_NAMES.length)],
-        surname: WIZARD_SURNAMES[window.utils.getRandomNumber(WIZARD_SURNAMES.length)],
-        coatColor: COAT_COLOR[window.utils.getRandomNumber(COAT_COLOR.length)],
-        eyeColor: EYE_COLOR[window.utils.getRandomNumber(EYE_COLOR.length)]
-      });
-    }
-  };
-
-  /**
    * Копируем вёрстку мага из шаблона и добавляем свои свойства к цвету и имени
    * @param {object} wizard - Объект-маг из массива магов
    * @return {object} Возвращаем объект-вёрстку мага
@@ -57,23 +46,24 @@
   var renderWizard = function (wizard) {
     var wizardClone = similarWizardTemplate.cloneNode(true);
 
-    wizardClone.querySelector('.setup-similar-label').textContent = wizard.name + ' ' + wizard.surname;
-    wizardClone.querySelector('.wizard-coat').style.fill = wizard.coatColor;
-    wizardClone.querySelector('.wizard-eyes').style.fill = wizard.eyeColor;
+    wizardClone.querySelector('.setup-similar-label').textContent = wizard.name;
+    wizardClone.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
+    wizardClone.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
 
     return wizardClone;
   };
 
   /**
    * Добавляем магов одного за другим к вёрстке
+   * @param {object} wizards - Массив волшебников
    * @return {void}
    */
-  var wizardAdd = function () {
+  var wizardAdd = function (wizards) {
     var fragment = document.createDocumentFragment();
 
-    wizards.forEach(function (item) {
-      fragment.appendChild(renderWizard(item));
-    });
+    for (var i = 0; i < WIZARD_COUNT; i++) {
+      fragment.appendChild(renderWizard(wizards[window.utils.getRandomNumber(wizards.length)]));
+    }
 
     similarList.appendChild(fragment);
   };
@@ -86,6 +76,8 @@
     userDialog.classList.remove('hidden');
     userDialog.style.top = '';
     userDialog.style.left = '';
+
+    form.addEventListener('submit', onFormSubmit);
 
     createEventListenersCloseSetupWindow();
     removeEventListenersOpenSetupWindow();
@@ -108,6 +100,8 @@
    */
   var closeSetupWindow = function () {
     userDialog.classList.add('hidden');
+
+    form.removeEventListener('submit', onFormSubmit);
 
     createEventListenersOpenSetupWindow();
     removeEventListenersCloseSetupWindow();
@@ -213,11 +207,37 @@
     setupFireball.addEventListener('click', changeFireballColor);
   };
 
+  /**
+   * Обрабатываем ошибки, которые пришли с сервера при загрузке списка волшебников
+   * @param {string} errorMessage - Сообщение об ошибке
+   * @return {void}
+   */
+  var onErrorWizardsLoad = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = INSERT_ELEMENT_STYLE;
+    node.style.position = INSERT_ELEMENT_STYLE_POSITION;
+    node.style.left = INSERT_ELEMENT_LEFT;
+    node.style.right = INSERT_ELEMENT_RIGHT;
+    node.style.fontSize = INSERT_ELEMENT_FONT_SIZE;
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement(INSERT_ELEMENT_POSITION, node);
+  };
+
+  /**
+   * Действия при отправке формы
+   * @param {object} evt - Событие отправки формы
+   * @return {void}
+   */
+  var onFormSubmit = function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(form), closeSetupWindow, onErrorWizardsLoad);
+  };
+
 
   setupWizardWindow.classList.remove('hidden');
   createEventListenersOpenSetupWindow();
   createEventListenersPlayerColor();
-  createWizards();
-  wizardAdd();
   similarList.classList.remove('hidden');
+  window.backend.load(wizardAdd, onErrorWizardsLoad);
 })();
