@@ -5,11 +5,16 @@
   var ENTER_KEY = 'Enter';
   var ESC_KEY = 'Escape';
 
+  var INSERT_ELEMENT_STYLE = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red';
+  var INSERT_ELEMENT_STYLE_POSITION = 'absolute';
+  var INSERT_ELEMENT_LEFT = 0;
+  var INSERT_ELEMENT_RIGHT = 0;
+  var INSERT_ELEMENT_FONT_SIZE = '30px';
+  var INSERT_ELEMENT_POSITION = 'afterbegin';
+
   var COAT_COLOR = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
   var EYE_COLOR = ['black', 'red', 'blue', 'yellow', 'green'];
   var FIREBALL_COLOR = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
-
-  // var wizards = [];
 
   var similarList = document.querySelector('.setup-similar-list');
   var userDialog = document.querySelector('.setup');
@@ -57,7 +62,7 @@
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < WIZARD_COUNT; i++) {
-      fragment.appendChild(renderWizard(wizards[i]));
+      fragment.appendChild(renderWizard(wizards[window.utils.getRandomNumber(wizards.length)]));
     }
 
     similarList.appendChild(fragment);
@@ -209,14 +214,14 @@
    */
   var onErrorWizardsLoad = function (errorMessage) {
     var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red';
-    node.style.position = 'absolute';
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.fontSize = '30px';
+    node.style = INSERT_ELEMENT_STYLE;
+    node.style.position = INSERT_ELEMENT_STYLE_POSITION;
+    node.style.left = INSERT_ELEMENT_LEFT;
+    node.style.right = INSERT_ELEMENT_RIGHT;
+    node.style.fontSize = INSERT_ELEMENT_FONT_SIZE;
 
     node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
+    document.body.insertAdjacentElement(INSERT_ELEMENT_POSITION, node);
   };
 
   /**

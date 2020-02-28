@@ -1,6 +1,11 @@
 'use strict';
 
 (function () {
+  var SUCCESS_STATUS = 200;
+  var TIMEOUT = 5000;
+  var RESPONSE_TYPE = 'json';
+  var ERROR_MESSAGE = 'Произошла ошибка соединения';
+  var TIMEOUT_MESSAGE = 'Запрос не успел выполнится за ';
   var SAVE_URL = 'https://js.dump.academy/code-and-magick';
   var LOAD_URL = 'https://js.dump.academy/code-and-magick/data';
 
@@ -13,7 +18,7 @@
    */
   var onLoadData = function (xhr, onLoad, onError) {
     return function () {
-      if (xhr.status === 200) {
+      if (xhr.status === SUCCESS_STATUS) {
         onLoad(xhr.response);
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
@@ -28,8 +33,12 @@
    */
   var onErrorLoadData = function (onError) {
     return function () {
-      onError('Произошла ошибка соединения');
+      onError(ERROR_MESSAGE);
     };
+  };
+
+  var createTimeoutMessage = function (xhr) {
+    return TIMEOUT_MESSAGE + xhr.timeout + 'мс';
   };
 
   /**
@@ -40,7 +49,7 @@
    */
   var onTimeoutLoadData = function (xhr, onError) {
     return function () {
-      onError('Запрос не успел выполнится за ' + xhr.timeout + 'мс');
+      onError(createTimeoutMessage(xhr));
     };
   };
 
@@ -52,8 +61,8 @@
    */
   var load = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
-    xhr.timeout = 5000;
+    xhr.responseType = RESPONSE_TYPE;
+    xhr.timeout = TIMEOUT;
 
     xhr.addEventListener('load', onLoadData(xhr, onLoad, onError), {once: true});
     xhr.addEventListener('error', onErrorLoadData(onError), {once: true});
@@ -72,7 +81,7 @@
    */
   var save = function (data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
+    xhr.responseType = RESPONSE_TYPE;
 
     xhr.addEventListener('load', onLoad, {once: true});
     xhr.addEventListener('error', onErrorLoadData(onError), {once: true});
