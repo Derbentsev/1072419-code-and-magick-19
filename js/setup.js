@@ -23,6 +23,7 @@
   var setupWizardCloseButton = userDialog.querySelector('.setup-close');
   var setupWizardOpenButton = document.querySelector('.setup-open');
   var avatarImage = setupWizardOpenButton.querySelector('img');
+
   var similarWizardTemplate = document.querySelector('#similar-wizard-template')
     .content
     .querySelector('.setup-similar-item');
@@ -34,8 +35,70 @@
   var setupWizardEyesInput = setupPlayer.querySelector('input[name="eyes-color"]');
   var setupFireball = document.querySelector('.setup-fireball-wrap');
 
+
+
   window.setup = {
     setupWindow: userDialog
+  };
+
+
+  /**
+   * Определяем коэффициент похожести нашего мага на элемент в массиве магов
+   * @param {*} wizard - Элемент в массиве магов
+   * @return {number} Коэффициент похожести нашего мага на элемент в массиве магов
+   */
+  var getRank = function (wizard) {
+    var rank = 0;
+
+    if (wizard.colorCoat === coatColor && wizard.colorEyes === eyeColor) {
+      rank += 3;
+    } else {
+      if (wizard.colorCoat === coatColor) {
+        rank += 2;
+      }
+      if (wizard.colorEyes === eyeColor) {
+        rank += 1;
+      }
+    }
+
+    return rank;
+  };
+
+  /**
+   * Сравниваем два соседних элемента в массиве магов
+   * @param {*} wizard1 - Первый элемент
+   * @param {*} wizard2 - Второй элемент
+   * @return {number} Исходя из этого числа, понимаем, менять ли местами элементы в массиве
+   */
+  var namesComparator = function (wizard1, wizard2) {
+    if (wizard1 > wizard2) {
+      return 1;
+    } else if (wizard1 < wizard2) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
+
+  /**
+   * Сортируем массив волшебников по похожести на нашего мага
+   * @param {*} wizards - Неотсортированный список волшебников
+   * @return {object} Отсортированный массив волшебников
+   */
+  var updateWizards = function (wizards) {
+    if (wizardsArr.length < 1) {
+      wizardsArr = wizards;
+    }
+
+    var sortedWizards = wizardsArr.sort(function (wizard1, wizard2) {
+      var rankDiff = getRank(wizard2) - getRank(wizard1);
+      if (rankDiff === 0) {
+        rankDiff = namesComparator(wizard1.name, wizard2.name);
+      }
+      return rankDiff;
+    });
+
+    return sortedWizards;
   };
 
   /**
@@ -58,11 +121,16 @@
    * @param {object} wizards - Массив волшебников
    * @return {void}
    */
-  var wizardAdd = function (wizards) {
+  var wizardsAdd = function (wizards) {
+    while (similarList.firstChild) {
+      similarList.removeChild(similarList.firstChild);
+    }
+
     var fragment = document.createDocumentFragment();
+    var sortedWizards = updateWizards(wizards);
 
     for (var i = 0; i < WIZARD_COUNT; i++) {
-      fragment.appendChild(renderWizard(wizards[window.utils.getRandomNumber(wizards.length)]));
+      fragment.appendChild(renderWizard(sortedWizards[i]));
     }
 
     similarList.appendChild(fragment);
@@ -172,9 +240,11 @@
    * @return {void}
    */
   var changeColorCoat = function () {
-    var coatColor = COAT_COLOR[window.utils.getRandomNumber(COAT_COLOR.length)];
+    coatColor = COAT_COLOR[window.utils.getRandomNumber(COAT_COLOR.length)];
     setupWizardCoat.style.fill = coatColor;
     setupWizardCoatInput.value = coatColor;
+
+    wizardsAdd();
   };
 
   /**
@@ -182,9 +252,11 @@
    * @return {void}
    */
   var changeEyesColor = function () {
-    var eyeColor = EYE_COLOR[window.utils.getRandomNumber(EYE_COLOR.length)];
+    eyeColor = EYE_COLOR[window.utils.getRandomNumber(EYE_COLOR.length)];
     setupWizardEyes.style.fill = eyeColor;
     setupWizardEyesInput.value = eyeColor;
+
+    wizardsAdd();
   };
 
   /**
@@ -239,5 +311,5 @@
   createEventListenersOpenSetupWindow();
   createEventListenersPlayerColor();
   similarList.classList.remove('hidden');
-  window.backend.load(wizardAdd, onErrorWizardsLoad);
+  window.backend.load(wizardsAdd, onErrorWizardsLoad);
 })();

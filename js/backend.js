@@ -9,6 +9,7 @@
   var SAVE_URL = 'https://js.dump.academy/code-and-magick';
   var LOAD_URL = 'https://js.dump.academy/code-and-magick/data';
 
+
   /**
    * Действия при загрузке формы на сервер
    * @param {object} xhr - XMLHttpRequest
@@ -64,9 +65,15 @@
     xhr.responseType = RESPONSE_TYPE;
     xhr.timeout = TIMEOUT;
 
-    xhr.addEventListener('load', onLoadData(xhr, onLoad, onError), {once: true});
-    xhr.addEventListener('error', onErrorLoadData(onError), {once: true});
-    xhr.addEventListener('timeout', onTimeoutLoadData(xhr, onError), {once: true});
+    xhr.addEventListener('load', onLoadData(xhr, onLoad, onError), {
+      once: true
+    });
+    xhr.addEventListener('error', onErrorLoadData(onError), {
+      once: true
+    });
+    xhr.addEventListener('timeout', onTimeoutLoadData(xhr, onError), {
+      once: true
+    });
 
     xhr.open('GET', LOAD_URL);
     xhr.send();
@@ -83,8 +90,12 @@
     var xhr = new XMLHttpRequest();
     xhr.responseType = RESPONSE_TYPE;
 
-    xhr.addEventListener('load', onLoad, {once: true});
-    xhr.addEventListener('error', onErrorLoadData(onError), {once: true});
+    xhr.addEventListener('load', onLoad, {
+      once: true
+    });
+    xhr.addEventListener('error', onErrorLoadData(onError), {
+      once: true
+    });
 
     xhr.open('POST', SAVE_URL);
     xhr.send(data);
