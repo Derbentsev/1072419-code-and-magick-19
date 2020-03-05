@@ -5,6 +5,33 @@
   var coatColor;
   var eyeColor;
 
+
+  window.setup.wizardItem.onEyeChange = window.debounce.setTimeout(function (color) {
+    eyeColor = color;
+    updateWizards(window.backend.wizards);
+  });
+
+  window.setup.wizardItem.onCoatChange = window.debounce.setTimeout(function (color) {
+    coatColor = color;
+    updateWizards(window.backend.wizards);
+  });
+
+  /**
+   * Сравниваем два соседних элемента в массиве магов
+   * @param {*} wizard1 - Первый элемент
+   * @param {*} wizard2 - Второй элемент
+   * @return {number} Исходя из этого числа, понимаем, менять ли местами элементы в массиве
+   */
+  var namesComparator = function (wizard1, wizard2) {
+    if (wizard1 > wizard2) {
+      return 1;
+    } else if (wizard1 < wizard2) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
+
   /**
    * Определяем коэффициент похожести нашего мага на элемент в массиве магов
    * @param {*} wizard - Элемент в массиве магов
@@ -44,6 +71,8 @@
       }
       return rankDiff;
     });
+
+    window.setup.wizardsAdd(sortedWizards);
 
     return sortedWizards;
   };

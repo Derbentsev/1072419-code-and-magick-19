@@ -9,6 +9,8 @@
   var SAVE_URL = 'https://js.dump.academy/code-and-magick';
   var LOAD_URL = 'https://js.dump.academy/code-and-magick/data';
 
+  var wizards = [];
+
 
   /**
    * Действия при загрузке формы на сервер
@@ -21,6 +23,7 @@
     return function () {
       if (xhr.status === SUCCESS_STATUS) {
         onLoad(xhr.response);
+        window.backend.wizards = xhr.response;
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
@@ -104,6 +107,7 @@
 
   window.backend = {
     save: save,
-    load: load
+    load: load,
+    wizards: wizards
   };
 })();
