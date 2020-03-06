@@ -35,10 +35,13 @@
   var setupWizardEyesInput = setupPlayer.querySelector('input[name="eyes-color"]');
   var setupFireball = document.querySelector('.setup-fireball-wrap');
 
-  var wizardItem = {
+  var coatColor;
+  var eyeColor;
+
+  /* var wizardItem = {
     onEyeChange: function () {},
     onCoatChange: function () {}
-  };
+  }; */
 
 
   /**
@@ -67,8 +70,6 @@
     }
 
     var fragment = document.createDocumentFragment();
-    // var sortedWizards = window.similarWizard.updateWizards(wizards);
-
     for (var i = 0; i < WIZARD_COUNT; i++) {
       fragment.appendChild(renderWizard(wizards[i]));
     }
@@ -175,15 +176,21 @@
     setupWizardCloseButton.removeEventListener('keydown', closeSetupWindow);
   };
 
+  var onColorChange = window.debounce.setTimeout(function () {
+    window.similarWizard.updateWizards();
+  });
+
+
   /**
    * Меняем цвет мантии
    * @return {void}
    */
   var changeColorCoat = function () {
-    var coatColor = COAT_COLOR[window.utils.getRandomNumber(COAT_COLOR.length)];
+    coatColor = COAT_COLOR[window.utils.getRandomNumber(COAT_COLOR.length)];
     setupWizardCoat.style.fill = coatColor;
     setupWizardCoatInput.value = coatColor;
-    wizardItem.onCoatChange(coatColor);
+    window.setup.coatColor = coatColor;
+    onColorChange();
   };
 
   /**
@@ -191,10 +198,11 @@
    * @return {void}
    */
   var changeEyesColor = function () {
-    var eyeColor = EYE_COLOR[window.utils.getRandomNumber(EYE_COLOR.length)];
+    eyeColor = EYE_COLOR[window.utils.getRandomNumber(EYE_COLOR.length)];
     setupWizardEyes.style.fill = eyeColor;
     setupWizardEyesInput.value = eyeColor;
-    wizardItem.onEyeChange(eyeColor);
+    window.setup.eyeColor = eyeColor;
+    onColorChange();
   };
 
   /**
@@ -247,8 +255,9 @@
 
   window.setup = {
     setupWindow: userDialog,
-    wizardItem: wizardItem,
-    wizardsAdd: wizardsAdd
+    wizardsAdd: wizardsAdd,
+    colorCoat: coatColor,
+    eyeColor: eyeColor
   };
 
 

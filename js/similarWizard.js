@@ -1,20 +1,14 @@
 'use strict';
 
 (function () {
+  var rankCoefficient = {
+    COAT_AND_EYES: 3,
+    COAT: 2,
+    EYE: 1
+  };
+
   var wizardsArr = [];
-  var coatColor;
-  var eyeColor;
 
-
-  window.setup.wizardItem.onEyeChange = window.debounce.setTimeout(function (color) {
-    eyeColor = color;
-    updateWizards(window.backend.wizards);
-  });
-
-  window.setup.wizardItem.onCoatChange = window.debounce.setTimeout(function (color) {
-    coatColor = color;
-    updateWizards(window.backend.wizards);
-  });
 
   /**
    * Сравниваем два соседних элемента в массиве магов
@@ -40,14 +34,14 @@
   var getRank = function (wizard) {
     var rank = 0;
 
-    if (wizard.colorCoat === coatColor && wizard.colorEyes === eyeColor) {
-      rank += 3;
+    if (wizard.colorCoat === window.setup.coatColor && wizard.colorEyes === window.setup.eyeColor) {
+      rank += rankCoefficient.COAT_AND_EYES;
     } else {
-      if (wizard.colorCoat === coatColor) {
-        rank += 2;
+      if (wizard.colorCoat === window.setup.coatColor) {
+        rank += rankCoefficient.COAT;
       }
-      if (wizard.colorEyes === eyeColor) {
-        rank += 1;
+      if (wizard.colorEyes === window.setup.eyeColor) {
+        rank += rankCoefficient.EYE;
       }
     }
 
@@ -59,9 +53,9 @@
    * @param {*} wizards - Неотсортированный список волшебников
    * @return {object} Отсортированный массив волшебников
    */
-  var updateWizards = function (wizards) {
+  var updateWizards = function () {
     if (wizardsArr.length < 1) {
-      wizardsArr = wizards;
+      wizardsArr = window.backend.wizards;
     }
 
     var sortedWizards = wizardsArr.sort(function (wizard1, wizard2) {
@@ -75,5 +69,10 @@
     window.setup.wizardsAdd(sortedWizards);
 
     return sortedWizards;
+  };
+
+
+  window.similarWizard = {
+    updateWizards: updateWizards
   };
 })();
