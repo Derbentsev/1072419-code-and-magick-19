@@ -23,6 +23,7 @@
   var setupWizardCloseButton = userDialog.querySelector('.setup-close');
   var setupWizardOpenButton = document.querySelector('.setup-open');
   var avatarImage = setupWizardOpenButton.querySelector('img');
+
   var similarWizardTemplate = document.querySelector('#similar-wizard-template')
     .content
     .querySelector('.setup-similar-item');
@@ -34,9 +35,14 @@
   var setupWizardEyesInput = setupPlayer.querySelector('input[name="eyes-color"]');
   var setupFireball = document.querySelector('.setup-fireball-wrap');
 
-  window.setup = {
-    setupWindow: userDialog
-  };
+  var coatColor;
+  var eyeColor;
+
+  /* var wizardItem = {
+    onEyeChange: function () {},
+    onCoatChange: function () {}
+  }; */
+
 
   /**
    * Копируем вёрстку мага из шаблона и добавляем свои свойства к цвету и имени
@@ -55,14 +61,17 @@
 
   /**
    * Добавляем магов одного за другим к вёрстке
-   * @param {object} wizards - Массив волшебников
+   * @param {object} wizards - Отсортированный массив волшебников
    * @return {void}
    */
-  var wizardAdd = function (wizards) {
-    var fragment = document.createDocumentFragment();
+  var wizardsAdd = function (wizards) {
+    while (similarList.firstChild) {
+      similarList.removeChild(similarList.firstChild);
+    }
 
+    var fragment = document.createDocumentFragment();
     for (var i = 0; i < WIZARD_COUNT; i++) {
-      fragment.appendChild(renderWizard(wizards[window.utils.getRandomNumber(wizards.length)]));
+      fragment.appendChild(renderWizard(wizards[i]));
     }
 
     similarList.appendChild(fragment);
@@ -167,14 +176,21 @@
     setupWizardCloseButton.removeEventListener('keydown', closeSetupWindow);
   };
 
+  var onColorChange = window.debounce.setTimeout(function () {
+    window.similarWizard.updateWizards();
+  });
+
+
   /**
    * Меняем цвет мантии
    * @return {void}
    */
   var changeColorCoat = function () {
-    var coatColor = COAT_COLOR[window.utils.getRandomNumber(COAT_COLOR.length)];
+    coatColor = COAT_COLOR[window.utils.getRandomNumber(COAT_COLOR.length)];
     setupWizardCoat.style.fill = coatColor;
     setupWizardCoatInput.value = coatColor;
+    window.setup.coatColor = coatColor;
+    onColorChange();
   };
 
   /**
@@ -182,9 +198,11 @@
    * @return {void}
    */
   var changeEyesColor = function () {
-    var eyeColor = EYE_COLOR[window.utils.getRandomNumber(EYE_COLOR.length)];
+    eyeColor = EYE_COLOR[window.utils.getRandomNumber(EYE_COLOR.length)];
     setupWizardEyes.style.fill = eyeColor;
     setupWizardEyesInput.value = eyeColor;
+    window.setup.eyeColor = eyeColor;
+    onColorChange();
   };
 
   /**
@@ -235,9 +253,17 @@
   };
 
 
+  window.setup = {
+    setupWindow: userDialog,
+    wizardsAdd: wizardsAdd,
+    colorCoat: coatColor,
+    eyeColor: eyeColor
+  };
+
+
   setupWizardWindow.classList.remove('hidden');
   createEventListenersOpenSetupWindow();
   createEventListenersPlayerColor();
   similarList.classList.remove('hidden');
-  window.backend.load(wizardAdd, onErrorWizardsLoad);
+  window.backend.load(wizardsAdd, onErrorWizardsLoad);
 })();

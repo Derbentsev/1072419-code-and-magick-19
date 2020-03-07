@@ -9,6 +9,10 @@
   var SAVE_URL = 'https://js.dump.academy/code-and-magick';
   var LOAD_URL = 'https://js.dump.academy/code-and-magick/data';
 
+  var configListener = {once: true};
+  var wizards = [];
+
+
   /**
    * Действия при загрузке формы на сервер
    * @param {object} xhr - XMLHttpRequest
@@ -20,6 +24,7 @@
     return function () {
       if (xhr.status === SUCCESS_STATUS) {
         onLoad(xhr.response);
+        window.backend.wizards = xhr.response;
       } else {
         onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
@@ -64,9 +69,9 @@
     xhr.responseType = RESPONSE_TYPE;
     xhr.timeout = TIMEOUT;
 
-    xhr.addEventListener('load', onLoadData(xhr, onLoad, onError), {once: true});
-    xhr.addEventListener('error', onErrorLoadData(onError), {once: true});
-    xhr.addEventListener('timeout', onTimeoutLoadData(xhr, onError), {once: true});
+    xhr.addEventListener('load', onLoadData(xhr, onLoad, onError), configListener);
+    xhr.addEventListener('error', onErrorLoadData(onError), configListener);
+    xhr.addEventListener('timeout', onTimeoutLoadData(xhr, onError), configListener);
 
     xhr.open('GET', LOAD_URL);
     xhr.send();
@@ -83,8 +88,8 @@
     var xhr = new XMLHttpRequest();
     xhr.responseType = RESPONSE_TYPE;
 
-    xhr.addEventListener('load', onLoad, {once: true});
-    xhr.addEventListener('error', onErrorLoadData(onError), {once: true});
+    xhr.addEventListener('load', onLoad, configListener);
+    xhr.addEventListener('error', onErrorLoadData(onError), configListener);
 
     xhr.open('POST', SAVE_URL);
     xhr.send(data);
@@ -93,6 +98,7 @@
 
   window.backend = {
     save: save,
-    load: load
+    load: load,
+    wizards: wizards
   };
 })();
