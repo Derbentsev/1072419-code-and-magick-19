@@ -38,11 +38,6 @@
   var coatColor;
   var eyeColor;
 
-  /* var wizardItem = {
-    onEyeChange: function () {},
-    onCoatChange: function () {}
-  }; */
-
 
   /**
    * Копируем вёрстку мага из шаблона и добавляем свои свойства к цвету и имени
@@ -90,6 +85,8 @@
 
     createEventListenersCloseSetupWindow();
     removeEventListenersOpenSetupWindow();
+
+    window.avatar.addAvatarListener();
   };
 
   /**
@@ -114,6 +111,8 @@
 
     createEventListenersOpenSetupWindow();
     removeEventListenersCloseSetupWindow();
+
+    window.avatar.removeAvatarListener();
   };
 
   /**
